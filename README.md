@@ -1,8 +1,7 @@
 # rollup-plugin-typescript
-![travis-ci](https://travis-ci.org/rollup/rollup-plugin-typescript.svg?branch=master)
-![npm-version](https://img.shields.io/npm/v/rollup-plugin-typescript.svg?maxAge=2592000)
-![npm-monthly-downloads](https://img.shields.io/npm/dm/rollup-plugin-typescript.svg?maxAge=2592000)
-![npm-dependencies](https://img.shields.io/david/rollup/rollup-plugin-typescript.svg?maxAge=2592000)
+![travis-ci](https://travis-ci.org/alexlur/rollup-plugin-typescript.svg?branch=master)
+![npm-version](https://img.shields.io/npm/v/@alexlur/rollup-plugin-typescript.svg?maxAge=2592000)
+![npm-dependencies](https://img.shields.io/david/alexlur/rollup-plugin-typescript.svg?maxAge=2592000)
 
 Seamless integration between Rollup and Typescript.
 
@@ -12,7 +11,10 @@ See [rollup-plugin-babel](https://github.com/rollup/rollup-plugin-babel).
 ## Installation
 
 ```bash
-npm install --save-dev rollup-plugin-typescript
+# with npm
+npm install --save-dev rollup-plugin-typescript typescript
+# with yarn
+yarn add typescript rollup-plugin-typescript --dev
 ```
 
 ## Usage
@@ -41,13 +43,7 @@ The following options are unique to `rollup-plugin-typescript`:
 * `typescript` overrides TypeScript used for transpilation
 
 ### TypeScript version
-[TypeScript 1.8.9](https://github.com/Microsoft/TypeScript/wiki/Roadmap#18) is used by default. Should your project require it, you can override the TypeScript version used for _transpiling the sources_.
-
-```js
-typescript({
-  typescript: require('some-fork-of-typescript')
-})
-```
+This plugin is version agnostic and will simply `require` TypeScript installed in your current folder.
 
 ## Issues
-Emit-less types, see [#28](https://github.com/rollup/rollup-plugin-typescript/issues/28).
+Emit-less types, see [#28](https://github.com/alexlur/rollup-plugin-typescript/issues/28).
