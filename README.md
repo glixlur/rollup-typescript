@@ -1,5 +1,5 @@
 # rollup-plugin-typescript
-[![Build Status](https://travis-ci.org/@alexlur/rollup-plugin-typescript.svg?branch=master)](https://travis-ci.org/alexlur/rollup-plugin-typescript)
+[![Build Status](https://travis-ci.org/alexlur/rollup-plugin-typescript.svg?branch=master)](https://travis-ci.org/alexlur/rollup-plugin-typescript)
 ![npm-version](https://img.shields.io/npm/v/@alexlur/rollup-plugin-typescript.svg?maxAge=2592000)
 ![npm-dependencies](https://img.shields.io/david/alexlur/rollup-plugin-typescript.svg?maxAge=2592000)
 
