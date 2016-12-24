@@ -3,6 +3,7 @@ import { createFilter } from 'rollup-pluginutils';
 import * as path from 'path';
 import * as fs from 'fs';
 import assign from 'object-assign';
+import { endsWith } from './string';
 
 import { getDefaultOptions, compilerOptionsFromTsConfig, adjustCompilerOptions } from './options.js';
 import * as resolveHost from './resolveHost';
@@ -16,12 +17,12 @@ interface Options {
 }
 
 // The injected id for helpers. Intentially invalid to prevent helpers being included in source maps.
-const helpersId = 'tslib';
-let helpersSource: string;
+const TSLIB = 'tslib';
+let tslibSource: string;
 
 try {
 	const tslibPath = require.resolve('tslib/' + require('tslib/package.json')['module']);
-	helpersSource = fs.readFileSync(tslibPath, 'utf8');
+	tslibSource = fs.readFileSync(tslibPath, 'utf8');
 } catch (e) {
 	console.warn('Error loading `tslib` helper library.');
 	throw e;
@@ -73,8 +74,8 @@ export default function typescript ( options ) {
 
 	return {
 		resolveId ( importee, importer ) {
-			if ( importee === helpersId ) {
-				return '\0' + helpersId;
+			if ( importee === TSLIB ) {
+				return '\0' + TSLIB;
 			}
 
 			if ( !importer ) return null;
@@ -86,7 +87,7 @@ export default function typescript ( options ) {
 			result = typescript.nodeModuleNameResolver( importee, importer, compilerOptions, resolveHost );
 
 			if ( result.resolvedModule && result.resolvedModule.resolvedFileName ) {
-				if ( result.resolvedModule.resolvedFileName.endsWith('.d.ts' ) ) {
+				if ( endsWith(result.resolvedModule.resolvedFileName, '.d.ts' ) ) {
 					return null;
 				}
 
@@ -97,8 +98,8 @@ export default function typescript ( options ) {
 		},
 
 		load ( id ) {
-			if ( id === '\0' + helpersId ) {
-				return helpersSource;
+			if ( id === '\0' + TSLIB ) {
+				return tslibSource;
 			}
 		},
 
