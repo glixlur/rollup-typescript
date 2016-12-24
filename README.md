@@ -12,9 +12,9 @@ See [rollup-plugin-babel](https://github.com/rollup/rollup-plugin-babel).
 
 ```bash
 # with npm
-npm install --save-dev rollup-plugin-typescript typescript
+npm install --save-dev @alexlur/rollup-plugin-typescript typescript
 # with yarn
-yarn add typescript rollup-plugin-typescript --dev
+yarn add typescript @alexlur/rollup-plugin-typescript --dev
 ```
 
 ## Usage
@@ -43,7 +43,7 @@ The following options are unique to `rollup-plugin-typescript`:
 * `typescript` overrides TypeScript used for transpilation
 
 ### TypeScript version
-This plugin is version agnostic and will simply `require` TypeScript installed in your current folder.
+This plugin currently requires TypeScript > 2.0. For earlier versions, use version 0.8.1.
 
 ## Issues
 Emit-less types, see [#28](https://github.com/alexlur/rollup-plugin-typescript/issues/28).

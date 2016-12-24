@@ -3,14 +3,10 @@ import { createFilter } from 'rollup-pluginutils';
 import * as path from 'path';
 import * as fs from 'fs';
 import assign from 'object-assign';
-import compareVersions from 'compare-versions';
 
-import { endsWith } from './string';
 import { getDefaultOptions, compilerOptionsFromTsConfig, adjustCompilerOptions } from './options.js';
-import fixExportClass from './fixExportClass';
-import resolveHost from './resolveHost';
+import * as resolveHost from './resolveHost';
 
-/*
 interface Options {
 	tsconfig?: boolean;
 	include?: string | string[];
@@ -18,29 +14,36 @@ interface Options {
 	typescript?: typeof ts;
 	module?: string;
 }
-*/
 
 // The injected id for helpers. Intentially invalid to prevent helpers being included in source maps.
-const helpersId = '\0typescript-helpers';
-const helpersSource = fs.readFileSync( path.resolve( __dirname, '../src/typescript-helpers.js' ), 'utf-8' );
+const helpersId = 'tslib';
+let helpersSource: string;
+
+try {
+	const tslibPath = require.resolve('tslib/' + require('tslib/package.json')['module']);
+	helpersSource = fs.readFileSync(tslibPath, 'utf8');
+} catch (e) {
+	console.warn('Error loading `tslib` helper library.');
+	throw e;
+}
 
 export default function typescript ( options ) {
 	options = assign( {}, options || {} );
 
 	const filter = createFilter(
 		options.include || [ '*.ts+(|x)', '**/*.ts+(|x)' ],
-		options.exclude || [ '*.d.ts', '**/*.d.ts' ] );
+		options.exclude || [ '*.d.ts', '**/*.d.ts' ] );
 
 	delete options.include;
 	delete options.exclude;
 
 	// Allow users to override the TypeScript version used for transpilation.
-	const typescript = options.typescript || ts;
+	const typescript = options.typescript || ts;
 
 	delete options.typescript;
 
 	// Load options from `tsconfig.json` unless explicitly asked not to.
-	const tsconfig = options.tsconfig === false ? {} :
+	const tsconfig = options.tsconfig === false ? {} :
 		compilerOptionsFromTsConfig( typescript );
 
 	delete options.tsconfig;
@@ -70,9 +73,8 @@ export default function typescript ( options ) {
 
 	return {
 		resolveId ( importee, importer ) {
-			// Handle the special `typescript-helpers` import itself.
 			if ( importee === helpersId ) {
-				return helpersId;
+				return '\0' + helpersId;
 			}
 
 			if ( !importer ) return null;
@@ -81,15 +83,10 @@ export default function typescript ( options ) {
 
 			importer = importer.split('\\').join('/');
 
-			if ( compareVersions( typescript.version, '1.8.0' ) < 0 ) {
-				// Suppress TypeScript warnings for function call.
-				result = typescript.nodeModuleNameResolver( importee, importer, resolveHost );
-			} else {
-				result = typescript.nodeModuleNameResolver( importee, importer, compilerOptions, resolveHost );
-			}
+			result = typescript.nodeModuleNameResolver( importee, importer, compilerOptions, resolveHost );
 
 			if ( result.resolvedModule && result.resolvedModule.resolvedFileName ) {
-				if ( endsWith( result.resolvedModule.resolvedFileName, '.d.ts' ) ) {
+				if ( result.resolvedModule.resolvedFileName.endsWith('.d.ts' ) ) {
 					return null;
 				}
 
@@ -100,7 +97,7 @@ export default function typescript ( options ) {
 		},
 
 		load ( id ) {
-			if ( id === helpersId ) {
+			if ( id === '\0' + helpersId ) {
 				return helpersSource;
 			}
 		},
@@ -108,7 +105,7 @@ export default function typescript ( options ) {
 		transform ( code, id ) {
 			if ( !filter( id ) ) return null;
 
-			const transformed = typescript.transpileModule( fixExportClass( code, id ), {
+			const transformed = typescript.transpileModule( code, {
 				fileName: id,
 				reportDiagnostics: true,
 				compilerOptions
@@ -142,8 +139,7 @@ export default function typescript ( options ) {
 
 			return {
 				// Always append an import for the helpers.
-				code: transformed.outputText +
-					`\nimport { __assign, __awaiter, __extends, __decorate, __metadata, __param } from '${helpersId}';`,
+				code: transformed.outputText,
 
 				// Rollup expects `map` to be an object so we must parse the string
 				map: transformed.sourceMapText ? JSON.parse(transformed.sourceMapText) : null

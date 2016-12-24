@@ -1,5 +1,4 @@
 import * as path from 'path';
-import compareVersions from 'compare-versions';
 import {
 	existsSync,
 	readFileSync
@@ -42,7 +41,7 @@ export function compilerOptionsFromTsConfig ( typescript ) {
 
 	const tsconfig = typescript.readConfigFile( findFile( cwd, 'tsconfig.json' ), path => readFileSync( path, 'utf8' ) );
 
-	if ( !tsconfig.config || !tsconfig.config.compilerOptions ) return {};
+	if ( !tsconfig.config || !tsconfig.config.compilerOptions ) return {};
 
 	return tsconfig.config.compilerOptions;
 }
@@ -59,10 +58,6 @@ export function adjustCompilerOptions ( typescript, options ) {
 	// See: https://github.com/rollup/rollup-plugin-typescript/issues/45
 	delete options.declaration;
 
-	const tsVersion = typescript.version.split('-')[0];
-	if ( 'strictNullChecks' in options && compareVersions( tsVersion, '1.9.0' ) < 0 ) {
-		delete options.strictNullChecks;
-
-		console.warn( `rollup-plugin-typescript: 'strictNullChecks' is not supported; disabling it` );
-	}
+	// Use importHelpers from TypeScript.
+	options.importHelpers = true;
 }

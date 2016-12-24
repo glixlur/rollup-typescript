@@ -1,17 +1,23 @@
-const assert = require( 'assert' );
-const rollup = require( 'rollup' );
-const assign = require( 'object-assign' );
-const typescript = require( '..' );
+const assert = require('assert');
+const { mustNot } = require('./env');
+const rollup = require('rollup');
+const assign = require('object-assign');
+const typescript = require('..');
 
 process.chdir( __dirname );
 
 // Evaluate a bundle (as CommonJS) and return its exports.
 function evaluate ( bundle ) {
 	const module = { exports: {} };
+	const code = bundle.generate({ format: 'cjs' }).code;
 
-	new Function( 'module', 'exports', bundle.generate({ format: 'cjs' }).code )( module, module.exports );
-
-	return module.exports;
+	try {
+		new Function( 'module', 'exports', code)( module, module.exports );
+		return module.exports;
+	} catch (e) {
+		console.warn(code);
+		throw e;
+	}
 }
 
 // Short-hand for rollup using the typescript plugin.
@@ -29,8 +35,8 @@ describe( 'rollup-plugin-typescript', function () {
 		return bundle( 'sample/basic/main.ts' ).then( bundle => {
 			const code = bundle.generate().code;
 
-			assert.ok( code.indexOf( 'number' ) === -1, code );
-			assert.ok( code.indexOf( 'const' ) === -1, code );
+			mustNot( code.includes('number'), code );
+			mustNot( code.includes('const'), code );
 		});
 	});
 
@@ -42,7 +48,6 @@ describe( 'rollup-plugin-typescript', function () {
 		return bundle( 'sample/async/main.ts' )
 			.then( bundle => {
 				const wait = evaluate( bundle );
-
 				return wait( 3 );
 			});
 	});
@@ -52,10 +57,10 @@ describe( 'rollup-plugin-typescript', function () {
 			const code = bundle.generate().code;
 
 			// The `__extends` function is defined in the bundle.
-			assert.ok( code.indexOf( 'function __extends' ) > -1, code );
+			assert.ok( code.includes( '__extends' ), code );
 
 			// No duplicate `__extends` helper is defined.
-			assert.equal( code.indexOf( '__extends$1' ), -1, code );
+			mustNot( code.includes( '__extends$1' ), code );
 		});
 	});
 
@@ -63,10 +68,10 @@ describe( 'rollup-plugin-typescript', function () {
 		return bundle( 'sample/export-class-fix/main.ts' ).then( bundle => {
 			const code = bundle.generate().code;
 
-			assert.equal( code.indexOf( 'class' ), -1, code );
-			assert.ok( code.indexOf( 'var A = (function' ) !== -1, code );
-			assert.ok( code.indexOf( 'var B = (function' ) !== -1, code );
-			assert.ok( code.indexOf( 'export { A, B };' ) !== -1, code );
+			mustNot( code.includes( 'class' ), code );
+			assert.ok( code.includes('var A = (function'), code );
+			assert.ok( code.includes('var B = (function'), code );
+			assert.ok( code.includes('export { A, B };'), code );
 		});
 	});
 
@@ -74,15 +79,15 @@ describe( 'rollup-plugin-typescript', function () {
 		return bundle( 'sample/import-class/main.ts' ).then( bundle => {
 			const code = bundle.generate().code;
 
-			assert.equal( code.indexOf( 'class' ), -1, code );
-			assert.equal( code.indexOf( '...' ), -1, code );
-			assert.equal( code.indexOf( '=>' ), -1, code );
+			mustNot( code.includes( 'class' ), code );
+			mustNot( code.includes( '...' ), code );
+			mustNot( code.includes( '=>' ), code );
 		});
 	});
 
 	it( 'reports diagnostics and throws if errors occur during transpilation', () => {
 		return bundle( 'sample/syntax-error/missing-type.ts' ).catch( error => {
-			assert.ok( error.message.indexOf( 'There were TypeScript errors transpiling' ) !== -1, 'Should reject erroneous code.' );
+			assert.ok( error.message.includes('There were TypeScript errors transpiling'), 'Should reject erroneous code.' );
 		});
 	});
 
@@ -144,29 +149,6 @@ describe( 'rollup-plugin-typescript', function () {
 			});
 		});
 
-		it( 'is disabled with a warning < 1.9.0', () => {
-			let warning = '';
-
-			console.warn = function (msg) {
-				warning = msg;
-			};
-
-			return rollup.rollup({
-				entry: 'sample/overriding-typescript/main.ts',
-				plugins: [
-					typescript({
-						tsconfig: false,
-						strictNullChecks: true,
-
-						typescript: fakeTypescript({
-							version: '1.8.0-fake'
-						})
-					})
-				]
-			}).then( () => {
-				assert.notEqual( warning.indexOf( "'strictNullChecks' is not supported" ), -1 );
-			});
-		});
 	});
 
 	it( 'should not resolve .d.ts files', () => {
@@ -179,12 +161,12 @@ describe( 'rollup-plugin-typescript', function () {
 		return bundle( 'sample/jsx/main.tsx', { jsx: 'react' }).then( bundle => {
 			const code = bundle.generate().code;
 
-			assert.notEqual( code.indexOf( 'const __assign = ' ), -1,
+			assert( code.includes( '__assign' ),
 				'should contain __assign definition' );
 
-			const usage = code.indexOf( 'React.createElement("span", __assign({}, props), "Yo!")' );
+			const usage = code.includes( 'React.createElement("span", __assign({}, props), "Yo!")' );
 
-			assert.notEqual( usage, -1, 'should contain usage' );
+			assert.ok( usage, 'should contain usage' );
 		});
 	});
 
@@ -217,7 +199,7 @@ describe( 'rollup-plugin-typescript', function () {
 				sourceMap: true
 			});
 
-			assert.ok( map.sources.every( source => source.indexOf( 'typescript-helpers' ) === -1) );
+			assert.ok( map.sources.every( source => !source.includes('typescript-helpers')) );
 		});
 	});
 });

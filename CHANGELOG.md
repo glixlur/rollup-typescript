@@ -1,5 +1,11 @@
 # rollup-plugin-typescript changelog
 
+## 1.0.1
+
+* `typescript` is now a peerDependency.
+* Use `tslib` for preventing helper libraries from being duplicated.
+* **Breaking Change:** Drop support for TypeScript 1.x.
+
 ## 0.8.1
 
 * Ignore typescript-helpers in source maps ([#61](https://github.com/rollup/rollup-plugin-typescript/issues/61))

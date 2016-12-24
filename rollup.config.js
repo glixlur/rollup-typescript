@@ -1,23 +1,23 @@
-import buble from 'rollup-plugin-buble';
+import ts from '@alexlur/rollup-plugin-typescript';
 
-var pkg = require( './package.json' );
+const pkg = require('./package.json');
 
 export default {
-	entry: 'src/index.js',
+	entry: 'src/index.ts',
 
 	external: [
-		'compare-versions',
 		'path',
 		'fs',
 		'object-assign',
 		'rollup-pluginutils',
-		'tippex',
 		'typescript'
 	],
 
 	plugins: [
-		buble()
+		ts(),
 	],
+
+	banner: '/* eslint-disable */',
 
 	targets: [
 		{
