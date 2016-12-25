@@ -16,7 +16,8 @@ interface Options {
 	module?: string;
 }
 
-// The injected id for helpers. Intentially invalid to prevent helpers being included in source maps.
+
+// The injected id for helpers.
 const TSLIB = 'tslib';
 let tslibSource: string;
 
@@ -39,7 +40,7 @@ export default function typescript ( options ) {
 	delete options.exclude;
 
 	// Allow users to override the TypeScript version used for transpilation.
-	const typescript = options.typescript || ts;
+	const typescript: typeof ts = options.typescript || ts;
 
 	delete options.typescript;
 
@@ -65,7 +66,9 @@ export default function typescript ( options ) {
 	const parsed = typescript.convertCompilerOptionsFromJson( options, process.cwd() );
 
 	if ( parsed.errors.length ) {
-		parsed.errors.forEach( error => console.error( `rollup-plugin-typescript: ${ error.messageText }` ) );
+		for (const error of parsed.errors) {
+			console.error( `rollup-plugin-typescript: ${ error.messageText }` );
+		}
 
 		throw new Error( `rollup-plugin-typescript: Couldn't process compiler options` );
 	}
@@ -109,16 +112,15 @@ export default function typescript ( options ) {
 			const transformed = typescript.transpileModule( code, {
 				fileName: id,
 				reportDiagnostics: true,
-				compilerOptions
+				compilerOptions,
 			});
 
 			// All errors except `Cannot compile modules into 'es6' when targeting 'ES5' or lower.`
-			const diagnostics = transformed.diagnostics ?
-				transformed.diagnostics.filter( diagnostic => diagnostic.code !== 1204 ) : [];
+			const diagnostics = transformed.diagnostics || [];
 
 			let fatalError = false;
 
-			diagnostics.forEach( diagnostic => {
+			for (const diagnostic of diagnostics) {
 				const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
 
 				if ( diagnostic.file ) {
@@ -132,7 +134,7 @@ export default function typescript ( options ) {
 				if ( diagnostic.category === ts.DiagnosticCategory.Error ) {
 					fatalError = true;
 				}
-			});
+			}
 
 			if ( fatalError ) {
 				throw new Error( `There were TypeScript errors transpiling` );
@@ -143,7 +145,7 @@ export default function typescript ( options ) {
 				code: transformed.outputText,
 
 				// Rollup expects `map` to be an object so we must parse the string
-				map: transformed.sourceMapText ? JSON.parse(transformed.sourceMapText) : null
+				map: transformed.sourceMapText ? JSON.parse(transformed.sourceMapText) : null,
 			};
 		}
 	};

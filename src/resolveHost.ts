@@ -1,4 +1,8 @@
-import { statSync } from 'fs';
+import { statSync, readFileSync } from 'fs';
+
+export function readFile(fileName: string) {
+	return readFileSync( fileName, 'utf8' );
+}
 
 export function directoryExists ( dirPath ) {
 	try {
