@@ -2,7 +2,6 @@ import * as ts from 'typescript';
 import { createFilter } from 'rollup-pluginutils';
 import * as path from 'path';
 import * as fs from 'fs';
-import assign from 'object-assign';
 import { endsWith } from './string';
 
 import { getDefaultOptions, compilerOptionsFromTsConfig, adjustCompilerOptions } from './options.js';
@@ -29,8 +28,8 @@ try {
 	throw e;
 }
 
-export default function typescript ( options ) {
-	options = assign( {}, options || {} );
+export default function typescript ( options: any ) {
+	options = { ... options };
 
 	const filter = createFilter(
 		options.include || [ '*.ts+(|x)', '**/*.ts+(|x)' ],
@@ -56,7 +55,7 @@ export default function typescript ( options ) {
 	adjustCompilerOptions( typescript, options );
 
 	// Merge all options.
-	options = assign( tsconfig, getDefaultOptions(), options );
+	options = { ...tsconfig, ...getDefaultOptions(), ...options };
 
 	// Verify that we're targeting ES2015 modules.
 	if ( options.module !== 'es2015' && options.module !== 'es6' ) {
@@ -66,7 +65,7 @@ export default function typescript ( options ) {
 	const parsed = typescript.convertCompilerOptionsFromJson( options, process.cwd() );
 
 	if ( parsed.errors.length ) {
-		for (const error of parsed.errors) {
+		for ( const error of parsed.errors ) {
 			console.error( `rollup-plugin-typescript: ${ error.messageText }` );
 		}
 
@@ -76,7 +75,7 @@ export default function typescript ( options ) {
 	const compilerOptions = parsed.options;
 
 	return {
-		resolveId ( importee, importer ) {
+		resolveId ( importee: string, importer: string ) {
 			if ( importee === TSLIB ) {
 				return '\0' + TSLIB;
 			}
@@ -100,13 +99,13 @@ export default function typescript ( options ) {
 			return null;
 		},
 
-		load ( id ) {
+		load ( id: string ) {
 			if ( id === '\0' + TSLIB ) {
 				return tslibSource;
 			}
 		},
 
-		transform ( code, id ) {
+		transform ( code: string, id: string ) {
 			if ( !filter( id ) ) return null;
 
 			const transformed = typescript.transpileModule( code, {
@@ -115,7 +114,6 @@ export default function typescript ( options ) {
 				compilerOptions,
 			});
 
-			// All errors except `Cannot compile modules into 'es6' when targeting 'ES5' or lower.`
 			const diagnostics = transformed.diagnostics || [];
 
 			let fatalError = false;

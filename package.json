@@ -27,7 +27,6 @@
     "prepublish": "npm run test"
   },
   "dependencies": {
-    "object-assign": "^4.0.1",
     "rollup-pluginutils": "^1.5.2",
     "tslib": "^1.2.0"
   },
