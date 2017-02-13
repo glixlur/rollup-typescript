@@ -16,6 +16,15 @@ interface Options {
 }
 
 
+interface RollupPlugin {
+	resolveId(importee: string, importer: string): any;
+	load(id: string): string;
+	transform(code: string, id: string): {
+		code: string;
+		map: any;
+	};
+}
+
 // The injected id for helpers.
 const TSLIB = 'tslib';
 let tslibSource: string;
@@ -28,7 +37,7 @@ try {
 	throw e;
 }
 
-export default function typescript ( options: any ) {
+export default function typescript ( options: Options ): RollupPlugin {
 	options = { ... options };
 
 	const filter = createFilter(
