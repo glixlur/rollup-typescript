@@ -5,9 +5,11 @@
   "main": "dist/rollup-plugin-typescript.cjs.js",
   "module": "dist/rollup-plugin-typescript.es.js",
   "jsnext:main": "dist/rollup-plugin-typescript.es.js",
+  "types": "types.d.ts",
   "files": [
     "dist",
-    "src"
+    "src",
+    "types.d.ts"
   ],
   "keywords": [
     "rollup-plugin",
