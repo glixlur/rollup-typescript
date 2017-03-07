@@ -1,5 +1,9 @@
 # rollup-plugin-typescript changelog
 
+## 1.0.4
+* Update dependencies
+* Correct TypeScript definition: `options` is Optional.
+
 ## 1.0.3
 * Export variable `default` for compatibility with `ts-node`.
 

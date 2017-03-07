@@ -18,5 +18,5 @@ declare module '@alexlur/rollup-plugin-typescript' {
 		}
 	}
 
-	export default function typescript(options: Options): RollupPlugin
+	export default function typescript(options?: Options): RollupPlugin
 }
