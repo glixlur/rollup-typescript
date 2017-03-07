@@ -1,5 +1,11 @@
 # rollup-plugin-typescript changelog
 
+## 1.0.3
+* Export variable `default` for compatibility with `ts-node`.
+
+## 1.0.2
+* Add TypeScript definition.
+
 ## 1.0.1
 
 * `typescript` is now a peerDependency.

@@ -15,7 +15,6 @@ interface Options {
 	module?: string;
 }
 
-
 interface RollupPlugin {
 	resolveId(importee: string, importer: string): any;
 	load(id: string): string;
@@ -36,6 +35,8 @@ try {
 	console.warn('Error loading `tslib` helper library.');
 	throw e;
 }
+
+typescript['default'] = typescript;
 
 export default function typescript ( options: Options ): RollupPlugin {
 	options = { ... options };
