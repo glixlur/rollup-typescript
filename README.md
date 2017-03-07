@@ -3,10 +3,10 @@
 ![npm-version](https://img.shields.io/npm/v/@alexlur/rollup-plugin-typescript.svg?maxAge=2592000)
 ![npm-dependencies](https://img.shields.io/david/alexlur/rollup-plugin-typescript.svg?maxAge=2592000)
 
-Seamless integration between Rollup and Typescript.
+Seamless integration between Rollup and TypeScript.
 
 ## Why?
-See [rollup-plugin-babel](https://github.com/rollup/rollup-plugin-babel).
+Because [the origin repository](https://github.com/rollup/rollup-plugin-typescript) hasn’t been maintained for a while.
 
 ## Installation
 
