@@ -1,4 +1,8 @@
-# rollup-plugin-typescript changelog
+# rollup-typescript changelog
+
+## 1.1.0
+* Update dependencies
+* Works with newer version of rollup
 
 ## 1.0.4
 * Update dependencies

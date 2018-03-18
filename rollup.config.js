@@ -3,14 +3,14 @@ import ts from '@alexlur/rollup-plugin-typescript';
 const pkg = require('./package.json');
 
 export default {
-	entry: 'src/index.ts',
+	input: 'src/index.ts',
 
 	external: [
 		'path',
 		'fs',
 		'object-assign',
 		'rollup-pluginutils',
-		'typescript'
+		'typescript',
 	],
 
 	plugins: [
@@ -19,14 +19,14 @@ export default {
 
 	banner: '/* eslint-disable */',
 
-	targets: [
+	output: [
 		{
 			format: 'cjs',
-			dest: pkg.main
+			file: pkg.main,
 		},
 		{
 			format: 'es',
-			dest: pkg.module
+			file: pkg.module,
 		}
 	]
 };

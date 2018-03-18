@@ -1,7 +1,7 @@
 # rollup-plugin-typescript
-[![Build Status](https://travis-ci.org/alexlur/rollup-plugin-typescript.svg?branch=master)](https://travis-ci.org/alexlur/rollup-plugin-typescript)
-![npm-version](https://img.shields.io/npm/v/@alexlur/rollup-plugin-typescript.svg?maxAge=2592000)
-![npm-dependencies](https://img.shields.io/david/alexlur/rollup-plugin-typescript.svg?maxAge=2592000)
+[![Build Status](https://travis-ci.org/glixlur/rollup-plugin-typescript.svg?branch=master)](https://travis-ci.org/glixlur/rollup-plugin-typescript)
+![npm-version](https://img.shields.io/npm/v/rollup-typescript.svg?maxAge=2592000)
+![npm-dependencies](https://img.shields.io/david/rollup-typescript.svg?maxAge=2592000)
 
 Seamless integration between Rollup and TypeScript.
 
@@ -12,16 +12,16 @@ Because [the origin repository](https://github.com/rollup/rollup-plugin-typescri
 
 ```bash
 # with npm
-npm install --save-dev @alexlur/rollup-plugin-typescript typescript
+npm install --save-dev rollup-typescript typescript
 # with yarn
-yarn add typescript @alexlur/rollup-plugin-typescript --dev
+yarn add typescript rollup-typescript --dev
 ```
 
 ## Usage
 
 ```js
 // rollup.config.js
-import typescript from 'rollup-plugin-typescript';
+import typescript from 'rollup-typescript';
 
 export default {
   entry: './main.ts',

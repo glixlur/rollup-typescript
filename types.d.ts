@@ -1,4 +1,4 @@
-declare module '@alexlur/rollup-plugin-typescript' {
+declare module 'rollup-typescript' {
 	import * as ts from 'typescript';
 
 	export interface Options {
@@ -15,7 +15,7 @@ declare module '@alexlur/rollup-plugin-typescript' {
 		transform(code: string, id: string): {
 			code: string;
 			map: any;
-		}
+		};
 	}
 
 	export default function typescript(options?: Options): RollupPlugin
