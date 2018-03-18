@@ -1,7 +1,7 @@
 # rollup-plugin-typescript
-[![Build Status](https://travis-ci.org/glixlur/rollup-plugin-typescript.svg?branch=master)](https://travis-ci.org/glixlur/rollup-plugin-typescript)
+[![Build Status](https://travis-ci.org/glixlur/rollup-typescript.svg?branch=master)](https://travis-ci.org/glixlur/rollup-typescript)
 ![npm-version](https://img.shields.io/npm/v/rollup-typescript.svg?maxAge=2592000)
-![npm-dependencies](https://img.shields.io/david/rollup-typescript.svg?maxAge=2592000)
+![npm-dependencies](https://img.shields.io/david/glixlur/rollup-typescript.svg?maxAge=2592000)
 
 Seamless integration between Rollup and TypeScript.
 

@@ -1,4 +1,4 @@
-import ts from '@alexlur/rollup-plugin-typescript';
+import ts from 'rollup-typescript';
 
 const pkg = require('./package.json');
 
