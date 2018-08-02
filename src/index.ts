@@ -1,10 +1,9 @@
 import * as ts from 'typescript';
-import { createFilter } from 'rollup-pluginutils';
-import * as path from 'path';
 import * as fs from 'fs';
+import { createFilter } from 'rollup-pluginutils';
 import { endsWith } from './string';
 
-import { getDefaultOptions, compilerOptionsFromTsConfig, adjustCompilerOptions } from './options.js';
+import { getDefaultOptions, compilerOptionsFromTsConfig, adjustCompilerOptions } from './options';
 import * as resolveHost from './resolveHost';
 
 interface Options {
@@ -17,8 +16,8 @@ interface Options {
 
 interface RollupPlugin {
 	resolveId(importee: string, importer: string): any;
-	load(id: string): string;
-	transform(code: string, id: string): {
+	load(id: string): undefined | string;
+	transform(code: string, id: string): null | {
 		code: string;
 		map: any;
 	};
@@ -37,9 +36,9 @@ try {
 }
 
 typescript['default'] = typescript;
+export default typescript;
 
-export default function typescript ( options: Options ): RollupPlugin {
-	options = { ... options };
+function typescript({...options}: Options): RollupPlugin {
 
 	const filter = createFilter(
 		options.include || [ '*.ts+(|x)', '**/*.ts+(|x)' ],
@@ -61,45 +60,45 @@ export default function typescript ( options: Options ): RollupPlugin {
 
 	// Since the CompilerOptions aren't designed for the Rollup
 	// use case, we'll adjust them for use with Rollup.
-	adjustCompilerOptions( typescript, tsconfig );
-	adjustCompilerOptions( typescript, options );
+	adjustCompilerOptions(typescript, tsconfig);
+	adjustCompilerOptions(typescript, options);
 
 	// Merge all options.
 	options = { ...tsconfig, ...getDefaultOptions(), ...options };
 
 	// Verify that we're targeting ES2015 modules.
-	if ( options.module !== 'es2015' && options.module !== 'es6' ) {
-		throw new Error( `rollup-plugin-typescript: The module kind should be 'es2015', found: '${ options.module }'` );
+	if (options.module !== 'es2015' && options.module !== 'es6') {
+		throw new Error(`rollup-typescript: The module kind should be 'es2015', found: '${ options.module }'`);
 	}
 
-	const parsed = typescript.convertCompilerOptionsFromJson( options, process.cwd() );
+	const parsed = typescript.convertCompilerOptionsFromJson(options, process.cwd());
 
-	if ( parsed.errors.length ) {
-		for ( const error of parsed.errors ) {
-			console.error( `rollup-plugin-typescript: ${ error.messageText }` );
+	if (parsed.errors.length) {
+		for (const error of parsed.errors) {
+			console.error(`rollup-typescript: ${error.messageText}`);
 		}
 
-		throw new Error( `rollup-plugin-typescript: Couldn't process compiler options` );
+		throw new Error(`rollup-typescript: Couldn’t process compiler options`);
 	}
 
 	const compilerOptions = parsed.options;
 
 	return {
-		resolveId ( importee: string, importer: string ) {
-			if ( importee === TSLIB ) {
+		resolveId(importee: string, importer: string) {
+			if (importee === TSLIB) {
 				return '\0' + TSLIB;
 			}
 
-			if ( !importer ) return null;
+			if (!importer) return null;
 
 			let result;
 
 			importer = importer.split('\\').join('/');
 
-			result = typescript.nodeModuleNameResolver( importee, importer, compilerOptions, resolveHost );
+			result = typescript.nodeModuleNameResolver(importee, importer, compilerOptions, resolveHost);
 
-			if ( result.resolvedModule && result.resolvedModule.resolvedFileName ) {
-				if ( endsWith(result.resolvedModule.resolvedFileName, '.d.ts' ) ) {
+			if (result.resolvedModule && result.resolvedModule.resolvedFileName) {
+				if (endsWith(result.resolvedModule.resolvedFileName, '.d.ts')) {
 					return null;
 				}
 
@@ -109,16 +108,16 @@ export default function typescript ( options: Options ): RollupPlugin {
 			return null;
 		},
 
-		load ( id: string ) {
-			if ( id === '\0' + TSLIB ) {
+		load(id: string) {
+			if (id === '\0' + TSLIB) {
 				return tslibSource;
 			}
 		},
 
-		transform ( code: string, id: string ) {
-			if ( !filter( id ) ) return null;
+		transform(code: string, id: string) {
+			if (!filter(id)) return null;
 
-			const transformed = typescript.transpileModule( code, {
+			const transformed = typescript.transpileModule(code, {
 				fileName: id,
 				reportDiagnostics: true,
 				compilerOptions,
@@ -131,21 +130,21 @@ export default function typescript ( options: Options ): RollupPlugin {
 			for (const diagnostic of diagnostics) {
 				const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
 
-				if ( diagnostic.file ) {
-					const { line, character } = diagnostic.file.getLineAndCharacterOfPosition( diagnostic.start );
+				if (diagnostic.file) {
+					const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start!);
 
-					console.error( `${diagnostic.file.fileName}(${line + 1},${character + 1}): error TS${diagnostic.code}: ${message}` );
+					console.error(`${diagnostic.file.fileName}(${line + 1},${character + 1}): error TS${diagnostic.code}: ${message}`);
 				} else {
-					console.error( `Error: ${message}` );
+					console.error(`Error: ${message}`);
 				}
 
-				if ( diagnostic.category === ts.DiagnosticCategory.Error ) {
+				if (diagnostic.category === ts.DiagnosticCategory.Error) {
 					fatalError = true;
 				}
 			}
 
-			if ( fatalError ) {
-				throw new Error( `There were TypeScript errors transpiling` );
+			if (fatalError) {
+				throw new Error(`There were TypeScript errors transpiling.`);
 			}
 
 			return {

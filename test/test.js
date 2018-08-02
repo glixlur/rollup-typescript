@@ -170,7 +170,7 @@ describe('rollup-plugin-typescript', function () {
 	it('should throw on bad options', () => {
 		assert.throws(() => {
 			createBundle('does-not-matter.ts', { foo: 'bar' });
-		}, /Couldn't process compiler options/);
+		}, /Couldn’t process compiler options/);
 	});
 
 	it('prevents errors due to conflicting `sourceMap`/`inlineSourceMap` options', () => {

@@ -1,4 +1,4 @@
-# rollup-plugin-typescript
+# rollup-typescript
 [![Build Status](https://travis-ci.org/glixlur/rollup-typescript.svg?branch=master)](https://travis-ci.org/glixlur/rollup-typescript)
 ![npm-version](https://img.shields.io/npm/v/rollup-typescript.svg?maxAge=2592000)
 ![npm-dependencies](https://img.shields.io/david/glixlur/rollup-typescript.svg?maxAge=2592000)
@@ -24,11 +24,10 @@ yarn add typescript rollup-typescript --dev
 import typescript from 'rollup-typescript';
 
 export default {
-  entry: './main.ts',
-
+  input: './main.ts',
   plugins: [
-    typescript()
-  ]
+    typescript(),
+  ],
 }
 ```
 

@@ -1,21 +1,21 @@
-import { statSync, readFileSync } from 'fs';
+import * as fs from 'fs';
 
 export function readFile(fileName: string) {
-	return readFileSync( fileName, 'utf8' );
+	return fs.readFileSync(fileName, 'utf8');
 }
 
-export function directoryExists ( dirPath ) {
+export function directoryExists(dirPath: string) {
 	try {
-		return statSync( dirPath ).isDirectory();
-	} catch ( err ) {
+		return fs.statSync(dirPath).isDirectory();
+	} catch {
 		return false;
 	}
 }
 
-export function fileExists ( filePath ) {
+export function fileExists(filePath: string) {
 	try {
-		return statSync( filePath ).isFile();
-	} catch ( err ) {
+		return fs.statSync(filePath).isFile();
+	} catch {
 		return false;
 	}
 }

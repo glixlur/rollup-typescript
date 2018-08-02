@@ -17,16 +17,16 @@ export default {
 		ts(),
 	],
 
-	banner: '/* eslint-disable */',
-
 	output: [
 		{
 			format: 'cjs',
 			file: pkg.main,
+			banner: '/* eslint-disable */',
 		},
 		{
 			format: 'es',
 			file: pkg.module,
+			banner: '/* eslint-disable */',
 		}
 	]
 };

@@ -15,20 +15,19 @@ export function getDefaultOptions () {
 // Gratefully lifted from 'look-up', due to problems using it directly:
 //   https://github.com/jonschlinkert/look-up/blob/master/index.js
 //   MIT Licenced
-function findFile ( cwd, filename ) {
-	let fp = cwd ? ( cwd + '/' + filename ) : filename;
-
-	if ( existsSync( fp ) ) {
+function findFile(cwd: string, filename: string) {
+	let fp = cwd ? `${cwd}/${filename}` : filename;
+	if (existsSync(fp)) {
 		return fp;
 	}
 
-	const segs = cwd.split( path.sep );
+	const segs = cwd.split(path.sep);
 	let len = segs.length;
 
-	while ( len-- ) {
-		cwd = segs.slice( 0, len ).join( '/' );
+	while (len--) {
+		cwd = segs.slice(0, len).join('/');
 		fp = cwd + '/' + filename;
-		if ( existsSync( fp ) ) {
+		if (existsSync(fp)) {
 			return fp;
 		}
 	}
@@ -36,12 +35,16 @@ function findFile ( cwd, filename ) {
 	return null;
 }
 
-export function compilerOptionsFromTsConfig ( typescript ) {
+export function compilerOptionsFromTsConfig(typescript: typeof import('typescript')) {
 	const cwd = process.cwd();
+	const filePath = findFile(cwd, 'tsconfig.json');
 
-	const tsconfig = typescript.readConfigFile( findFile( cwd, 'tsconfig.json' ), path => readFileSync( path, 'utf8' ) );
+	const tsconfig = filePath && typescript.readConfigFile(
+		filePath,
+		path => readFileSync(path, 'utf8')
+	);
 
-	if ( !tsconfig.config || !tsconfig.config.compilerOptions ) return {};
+	if (!tsconfig || !tsconfig.config || !tsconfig.config.compilerOptions) return {};
 
 	return tsconfig.config.compilerOptions;
 }
