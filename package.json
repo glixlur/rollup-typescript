@@ -1,0 +1,60 @@
+{
+  "name": "rollup-typescript",
+  "version": "1.2.0",
+  "description": "Seamless integration between Rollup and TypeScript.",
+  "main": "dist/rollup-typescript.cjs.js",
+  "module": "dist/rollup-typescript.es.js",
+  "jsnext:main": "dist/rollup-typescript.es.js",
+  "types": "types.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "types.d.ts"
+  ],
+  "keywords": [
+    "rollup-plugin",
+    "typescript",
+    "es2015"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/glixlur/rollup-typescript",
+  "author": "@glixlur",
+  "scripts": {
+    "prebuild": "rimraf dist/*",
+    "build": "npx rollup -c",
+    "lint": "tslint -c ./tslint.json src/*.ts",
+    "pretest": "npm run build",
+    "test": "mv tsconfig.json _tsconfig.json; mocha; mv _tsconfig.json tsconfig.json",
+    "posttest": "npm run lint",
+    "prepublish": "npm run test"
+  },
+  "dependencies": {
+    "rollup-pluginutils": "^2.3.2",
+    "tslib": "^1.9.3"
+  },
+  "peerDependencies": {
+    "typescript": ">=2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^10.5.5",
+    "buble": "^0.19.3",
+    "eslint": "^5.2.0",
+    "mocha": "^5.2.0",
+    "npx": "^10.2.0",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.63.5",
+    "rollup-typescript": "^1.1.2",
+    "rollup-plugin-buble": "^0.19.2",
+    "ts-node": "^7.0.0",
+    "tslib": "^1.9.3",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/glixlur/rollup-typescript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/glixlur/rollup-typescript/issues"
+  }
+}
